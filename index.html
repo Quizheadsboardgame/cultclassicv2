@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0CC0DF; /* Background color */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 40%;
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow */
+            padding: 20px;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 5px solid #0CC0DF; /* Outer blue border color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .qa-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .question {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .answer {
+            font-size: 1.2em;
+            color: #555;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Text shadow */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img id="quizImage" src="https://i.imgur.com/P4C9K84.png" alt="Quiz Image">
+        <div class="qa-box">
+            <div id="question" class="question">Click the image to get a question!</div>
+            <div id="answer" class="answer"></div>
+        </div>
+    </div>
+    
+    <script>
+        const questionsAndAnswers = [
+            { question: "Which film, directed by David Lynch, is known for its surreal and disturbing narrative, set in a mysterious city?", answer: "Mulholland Drive" },
+            { question: "What is the title of the 1999 film directed by Fight Club's David Fincher, which is known for its unconventional story and dark themes?", answer: "Fight Club" },
+            { question: "Which film directed by Quentin Tarantino features a non-linear storyline and an ensemble cast in a story of crime and redemption?", answer: "Pulp Fiction" },
+            { question: "What is the name of the cult classic film directed by John Carpenter that follows a group of friends as they encounter mysterious events in a small town?", answer: "They Live" },
+            { question: "Which 1980 film directed by Stanley Kubrick is an adaptation of a Stephen King novel and is known for its psychological horror?", answer: "The Shining" },
+            { question: "What is the title of the 1984 film directed by Jim Henson, which combines puppetry and fantasy in a story about a young girl and a mystical land?", answer: "Labyrinth" },
+            { question: "Which film directed by Terry Gilliam is known for its satirical take on the dystopian future and follows a bureaucrat's adventure?", answer: "Brazil" },
+            { question: "What is the name of the 1975 film directed by Brian De Palma that features a telekinetic girl and a high school prom gone wrong?", answer: "Carrie" },
+            { question: "Which film directed by Richard Kelly follows a troubled teenager's experiences with time travel and a large, mysterious rabbit?", answer: "Donnie Darko" },
+            { question: "What is the title of the 1996 film directed by Wes Craven that revitalized the slasher genre with its meta-commentary and self-aware script?", answer: "Scream" },
+            { question: "Which 1990 film directed by Martin Scorsese is a biographical crime film about a mobster's life and rise in the criminal underworld?", answer: "Goodfellas" },
+            { question: "What is the name of the 1976 film directed by Sidney Lumet that stars Peter Finch as a news anchor in a story about media manipulation?", answer: "Network" },
+            { question: "Which film, directed by Richard Linklater, is a cult classic that explores the adventures of a group of teenagers in 1976 Texas?", answer: "Dazed and Confused" },
+            { question: "What is the title of the 2001 film directed by Robert Rodriguez that features a dual narrative of action and suspense in a futuristic world?", answer: "The Faculty" },
+            { question: "Which 1997 film directed by Paul Verhoeven features a satirical take on fascism and militarism in a futuristic society?", answer: "Starship Troopers" },
+            { question: "What is the name of the 1985 film directed by Robert Zemeckis that combines sci-fi with comedy and features time travel?", answer: "Back to the Future" },
+            { question: "Which film, directed by Jim Jarmusch, is known for its minimalist style and follows a day in the life of a small-town New Orleans bartender?", answer: "Coffee and Cigarettes" },
+            { question: "What is the title of the 1994 film directed by Michael Bay that features a high-octane, over-the-top story about a group of misfits in a police precinct?", answer: "Bad Boys" },
+            { question: "Which 1982 film directed by Ridley Scott is a groundbreaking sci-fi classic about a dystopian future with synthetic beings?", answer: "Blade Runner" },
+            { question: "What is the name of the 2005 film directed by Richard Kelly that follows a young man who believes he has visions of the end of the world?", answer: "Southland Tales" },
+            { question: "Which film, directed by Stanley Kubrick, features a dystopian future with themes of violence and social commentary?", answer: "A Clockwork Orange" },
+            { question: "What is the title of the 1992 film directed by David Lynch that is known for its surreal and disturbing portrayal of a woman's psychological trauma?", answer: "Twin Peaks: Fire Walk with Me" },
+            { question: "Which 1979 film directed by Ridley Scott features a tense and claustrophobic story of a space crew encountering a deadly alien lifeform?", answer: "Alien" },
+            { question: "What is the name of the 1981 film directed by John Carpenter that follows a group of friends as they experience a series of supernatural events?", answer: "Escape from New York" },
+            { question: "Which film, directed by Tim Burton, features a dark and whimsical story about a young man's encounters with eccentric characters in a gothic town?", answer: "Edward Scissorhands" },
+            { question: "What is the title of the 1987 film directed by Paul Verhoeven that explores themes of corporate greed and morality in a future where crime is rampant?", answer: "RoboCop" },
+            { question: "Which 2006 film directed by Guillermo del Toro is known for its dark fairy-tale elements and a young girl's adventures during the Spanish Civil War?", answer: "Pan's Labyrinth" },
+            { question: "What is the name of the 1998 film directed by Wes Anderson that follows a dysfunctional family and their journey to find their missing son?", answer: "Rushmore" },
+            { question: "Which film directed by David Cronenberg features a disturbing story about a man's transformation into a monstrous being?", answer: "The Fly" },
+            { question: "What is the title of the 2004 film directed by Richard Kelly that combines elements of sci-fi and thriller genres in a story about time travel and alternate realities?", answer: "Donnie Darko" },
+            { question: "Which 1991 film directed by Jonathan Demme is known for its psychological thriller elements and features a cannibalistic serial killer?", answer: "The Silence of the Lambs" },
+            { question: "What is the name of the 1999 film directed by M. Night Shyamalan that features a twist ending and revolves around a young boy who can see dead people?", answer: "The Sixth Sense" },
+            { question: "Which film directed by Paul Thomas Anderson follows the story of a child actor and his rise to fame in the adult film industry?", answer: "Boogie Nights" },
+            { question: "What is the title of the 1983 film directed by Brian De Palma that is known for its intense and graphic portrayal of gang violence?", answer: "Scarface" },
+            { question: "Which 2001 film directed by Richard Linklater features a unique narrative structure and explores the lives of various characters during a high school party?", answer: "Slackers" },
+            { question: "What is the name of the 1995 film directed by David Fincher that follows a detective's investigation into a series of grisly murders inspired by the seven deadly sins?", answer: "Se7en" },
+            { question: "Which film directed by Terry Gilliam features a satirical take on a dystopian society and follows a bureaucrat's journey through a nightmarish world?", answer: "Brazil" },
+            { question: "What is the title of the 1982 film directed by John Carpenter that is a remake of a classic sci-fi film and features a tense and claustrophobic story?", answer: "The Thing" },
+            { question: "Which 1988 film directed by Danny Boyle features a drug-induced story and explores themes of addiction and hedonism?", answer: "Trainspotting" },
+            { question: "What is the name of the 1994 film directed by Frank Darabont that is a prison drama based on a Stephen King novella and features themes of hope and friendship?", answer: "The Shawshank Redemption" },
+            { question: "Which film directed by David Lynch is known for its surreal and atmospheric storytelling and follows the investigation of a young woman's murder?", answer: "Blue Velvet" },
+            { question: "What is the title of the 1974 film directed by Mel Brooks that is a comedic parody of the horror genre?", answer: "Young Frankenstein" },
+            { question: "Which 1980 film directed by Michael Cimino explores the effects of the Vietnam War on American soldiers and their lives after returning home?", answer: "The Deer Hunter" },
+            { question: "What is the name of the 1991 film directed by Michael Mann that features a complex narrative and follows the story of a bank robber and his pursuer?", answer: "Heat" },
+            { question: "Which film directed by Jean-Pierre Jeunet and Marc Caro is known for its imaginative and visually stunning world and follows a girl searching for her parents?", answer: "Delicatessen" },
+            { question: "What is the title of the 2008 film directed by Darren Aronofsky that features a story about obsession and the quest for perfection in the world of ballet?", answer: "Black Swan" },
+            { question: "Which 2002 film directed by Danny Boyle features a post-apocalyptic world and follows a group of survivors as they navigate a world ravaged by a deadly virus?", answer: "28 Days Later" },
+            { question: "What is the name of the 2001 film directed by Michael Gondry that features a whimsical story about a man who creates a fantastical world to escape his mundane life?", answer: "The Science of Sleep" },
+            { question: "Which film directed by Yorgos Lanthimos features a darkly comedic story about a man living in a dystopian society where individuals must find a partner or face dire consequences?", answer: "The Lobster" },
+            { question: "What is the title of the 1979 film directed by Francis Ford Coppola that explores the experiences of a Vietnam War soldier and his descent into madness?", answer: "Apocalypse Now" },
+            { question: "Which 1988 film directed by John Waters features a comedic and satirical take on the lives of a dysfunctional family?", answer: "Hairspray" },
+            { question: "What is the name of the 2003 film directed by Sofia Coppola that features a story about a young woman who becomes involved with a rock band during a turbulent period in her life?", answer: "Lost in Translation" },
+            { question: "Which film directed by Jean-Luc Godard is known for its experimental style and is a key work of the French New Wave movement?", answer: "Breathless" },
+            { question: "What is the title of the 1993 film directed by Richard Linklater that features a unique narrative structure and follows a group of friends over the course of a few years?", answer: "Slacker" },
+            { question: "Which 2004 film directed by Michel Gondry features a whimsical and imaginative story about a man's quest to escape from his ordinary life?", answer: "Eternal Sunshine of the Spotless Mind" },
+            { question: "What is the name of the 2009 film directed by Lars von Trier that follows the story of a woman who suffers from amnesia and becomes involved in a strange and surreal world?", answer: "Antichrist" },
+            { question: "Which film directed by David Lynch is known for its surreal and disturbing imagery and follows a woman who is trying to uncover the truth behind a mysterious disappearance?", answer: "Lost Highway" },
+            { question: "What is the title of the 1981 film directed by Walter Hill that features a stylized and action-packed story about a gang's quest to clear their name?", answer: "The Warriors" },
+            { question: "Which 1999 film directed by Guillermo del Toro features a dark and fairy-tale like story about a young girl's encounters with mythical creatures?", answer: "The Devil's Backbone" },
+            { question: "What is the name of the 1992 film directed by Neil Jordan that follows a man who is searching for answers to his mysterious and violent past?", answer: "The Crying Game" },
+            { question: "Which film directed by William Friedkin features a gritty and intense story about a drug enforcement officer's efforts to combat narcotics trafficking?", answer: "The French Connection" },
+            { question: "What is the title of the 2007 film directed by Sean Penn that features a biographical story about the life and political activism of a slain politician?", answer: "Into the Wild" },
+            { question: "Which 1997 film directed by Luc Besson features a high-octane story about a futuristic New York City and the last hope for humanity?", answer: "The Fifth Element" },
+            { question: "What is the name of the 1998 film directed by Barry Levinson that is a satirical comedy about the media and the manipulation of news stories?", answer: "Wag the Dog" },
+            { question: "Which film directed by Terry Gilliam features a story about a man who is inadvertently transported to a strange and dystopian future?", answer: "The Adventures of Baron Munchausen" },
+            { question: "What is the title of the 1992 film directed by Sam Raimi that features a humorous and grotesque story about a man who becomes possessed by a malevolent entity?", answer: "Army of Darkness" },
+            { question: "Which 2001 film directed by Richard Kelly features a story about a man who discovers that he is living in an alternate reality and must navigate a series of bizarre events?", answer: "Donnie Darko" },
+            { question: "What is the name of the 1999 film directed by David Fincher that follows the story of an insomniac man's quest for meaning in his life through a series of violent encounters?", answer: "Fight Club" },
+            { question: "Which film directed by Peter Jackson features a darkly comedic story about a young man's journey through a violent and chaotic world?", answer: "Dead Alive" },
+            { question: "What is the title of the 2003 film directed by Sofia Coppola that follows the story of a young woman who finds solace and connection in a foreign land?", answer: "Lost in Translation" },
+            { question: "Which 1976 film directed by Brian De Palma features a dark and psychological story about a prom night gone wrong?", answer: "Carrie" },
+            { question: "What is the name of the 1997 film directed by Paul Verhoeven that combines elements of satire and science fiction in a story about a dystopian future?", answer: "Starship Troopers" },
+            { question: "Which film directed by Ridley Scott features a dark and atmospheric story about a group of space travelers encountering a deadly alien?", answer: "Alien" },
+            { question: "What is the title of the 2004 film directed by Michel Gondry that features a unique and imaginative story about the end of a relationship and the erasure of memories?", answer: "Eternal Sunshine of the Spotless Mind" },
+            { question: "Which 1982 film directed by John Carpenter features a suspenseful and claustrophobic story about a group of scientists encountering an alien organism?", answer: "The Thing" },
+            { question: "What is the name of the 1994 film directed by Quentin Tarantino that features a non-linear narrative and follows the lives of several interconnected characters?", answer: "Pulp Fiction" },
+            { question: "Which film directed by Tim Burton features a darkly whimsical story about a young man's adventures in a gothic town?", answer: "Edward Scissorhands" },
+            { question: "What is the title of the 1996 film directed by Wes Craven that revitalized the slasher genre with its meta-commentary and self-aware script?", answer: "Scream" },
+            { question: "Which 1991 film directed by Jonathan Demme features a psychological thriller story about a cannibalistic serial killer?", answer: "The Silence of the Lambs" },
+            { question: "What is the name of the 1985 film directed by Terry Gilliam that features a satirical take on a bureaucratic and dystopian society?", answer: "Brazil" },
+            { question: "Which film directed by Richard Kelly features a surreal and disturbing narrative about a troubled teenager's experiences with time travel and alternate realities?", answer: "Donnie Darko" }
+        ];
+
+        document.getElementById('quizImage').addEventListener('click', function() {
+            const randomIndex = Math.floor(Math.random() * questionsAndAnswers.length);
+            const question = questionsAndAnswers[randomIndex].question;
+            const answer = questionsAndAnswers[randomIndex].answer;
+
+            document.getElementById('question').textContent = question;
+            document.getElementById('answer').textContent = answer;
+        });
+    </script>
+</body>
+</html>
